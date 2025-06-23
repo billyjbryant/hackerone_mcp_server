@@ -1,0 +1,5 @@
+# Ignore the .env file
+.env
+
+# Ignore a specific file inside the rules directory
+rules/hackerone_mcp_directives.mdc
