@@ -6,7 +6,7 @@ A Model Context Protocol (MCP) server that provides seamless integration with Ha
 
 - **Comprehensive Report Management**: Fetch and analyze new reports, all reports, or specific reports by ID
 - **Smart Duplicate Detection**: Advanced similarity analysis to identify potential duplicate reports
-- **Scope Validation**: Automated checking of reports against program scope and policies  
+- **Scope Validation**: Automated checking of reports against program scope and policies
 - **Weekly Reporting**: Generate detailed weekly status reports with metrics and insights
 - **MDC Compliance**: Built-in security directives and compliance checking for consistent operations
 - **Zero-Knowledge Architecture Support**: Specialized handling for privacy-first security models
@@ -55,6 +55,7 @@ poetry run python --version
 ```
 
 **Poetry Troubleshooting:**
+
 - **Mac/Linux**: If `poetry` command not found, add `~/.local/bin` to your PATH
 - **Windows**: Poetry might install to `%APPDATA%\Python\Scripts` - add to PATH
 - **Permission Issues**: Use `python3 -m pip install --user poetry` as alternative
@@ -94,6 +95,7 @@ The server requires these packages (automatically installed by Poetry/pip):
 #### Dependency Installation Troubleshooting
 
 **1. Python Version Issues:**
+
 ```bash
 # Check Python version
 python --version
@@ -106,6 +108,7 @@ python3 --version
 ```
 
 **2. SSL Certificate Errors:**
+
 ```bash
 # macOS SSL issues
 /Applications/Python\ 3.x/Install\ Certificates.command
@@ -115,6 +118,7 @@ pip install --upgrade certifi
 ```
 
 **3. Compilation Errors (especially on older systems):**
+
 ```bash
 # Install development tools
 # Ubuntu/Debian:
@@ -165,7 +169,7 @@ H1_PROGRAM=your_program_handle
 2. **Navigate to Settings**: Click your profile → Settings
 3. **API Tokens Section**: Go to "API Tokens" tab
 4. **Create Token**: Click "Create API Token"
-5. **Copy Credentials**: 
+5. **Copy Credentials**:
    - Username: Your HackerOne username (not email)
    - API Token: The generated token (starts with `h1_`)
 6. **Find Program Handle**: Your program handle is in the URL: `https://hackerone.com/your_program_handle`
@@ -238,10 +242,10 @@ touch rules/hackerone_mcp_directives.mdc
 
 ```bash
 # Using Poetry
-poetry run python src/hackerone_mcp/main.py --help
+poetry run hackerone-mcp
 
-# Using pip/venv
-python src/hackerone_mcp/main.py --help
+# Using pip/venv (after installing with pip install -e .)
+hackerone-mcp
 ```
 
 #### Environment Test
@@ -291,61 +295,82 @@ python test_setup.py
 ### Common Installation Issues & Solutions
 
 #### 1. **MDC File Path Error**
+
 ```
 Error: MDC file not found at /path/to/rules/hackerone_mcp_directives.mdc
 ```
-**Solution**: 
+
+**Solution**:
+
 - Ensure the MDC file exists: `ls -la rules/hackerone_mcp_directives.mdc`
 - Create the directory if missing: `mkdir -p rules`
 - Or set custom path via environment: `export MDC_FILE_PATH="/your/custom/path/file.mdc"`
 
 #### 2. **Import Errors**
+
 ```
 ModuleNotFoundError: No module named 'httpx'
 ```
-**Solution**: 
+
+**Solution**:
+
 - Ensure virtual environment is activated
 - Reinstall dependencies: `poetry install` or `pip install -r requirements.txt`
 
 #### 3. **Permission Denied**
+
 ```
 PermissionError: [Errno 13] Permission denied
 ```
+
 **Solution**:
+
 - Check file permissions: `chmod +x src/hackerone_mcp/main.py`
 - Don't run with `sudo` - use virtual environments instead
 
 #### 4. **Python Path Issues**
+
 ```
 python: command not found
 ```
+
 **Solution**:
+
 - Use `python3` instead of `python`
 - Check Python installation: `which python3`
 - Add Python to PATH (Windows)
 
 #### 5. **Poetry Not Found**
+
 ```
 poetry: command not found
 ```
+
 **Solution**:
+
 - Add Poetry to PATH: `export PATH="$HOME/.local/bin:$PATH"`
 - Or install via pip: `pip install poetry`
 - Restart terminal after installation
 
 #### 6. **SSL/TLS Errors**
+
 ```
 SSL: CERTIFICATE_VERIFY_FAILED
 ```
+
 **Solution**:
+
 - Update certificates: `pip install --upgrade certifi`
 - macOS: Run `/Applications/Python\ 3.x/Install\ Certificates.command`
 
 #### 7. **HackerOne API Authentication**
+
 ```
 Error: HackerOne API returned status 401
 ```
+
 **Solution**:
+
 - Verify credentials are correct
 - Check if API token has proper permissions
 - Ensure program handle is exact (case-sensitive)
@@ -380,7 +405,7 @@ If everything is working correctly, you should see:
 
 ```bash
 # Run the server directly
-poetry run python src/hackerone_mcp/main.py
+poetry run hackerone-mcp
 
 # Expected output:
 HackerOne MCP Server with MDC starting...
@@ -400,16 +425,19 @@ Press `Ctrl+C` to stop the test.
 Find your Claude Desktop configuration file:
 
 **macOS:**
+
 ```
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
 **Windows:**
+
 ```
 %APPDATA%\Claude\claude_desktop_config.json
 ```
 
 **Linux:**
+
 ```
 ~/.config/Claude/claude_desktop_config.json
 ```
@@ -443,7 +471,7 @@ If using Poetry, use this configuration instead:
   "mcpServers": {
     "hackerone-mcp": {
       "command": "poetry",
-      "args": ["run", "python", "src/hackerone_mcp/main.py"],
+      "args": ["run", "hackerone-mcp"],
       "cwd": "/absolute/path/to/hackerone-mcp",
       "env": {
         "H1_USERNAME": "your_hackerone_username",
@@ -524,6 +552,7 @@ Here are practical examples of how to interact with the server:
 ### Tool-Specific Usage Examples
 
 #### 🆕 **New Reports Tool**
+
 ```
 "Show me new reports that need triage"
 "What new vulnerabilities came in today?"
@@ -531,6 +560,7 @@ Here are practical examples of how to interact with the server:
 ```
 
 **What you get:**
+
 - Complete new reports with vulnerability details
 - MDC triage questions automatically provided
 - Escalation alerts for critical issues
@@ -538,6 +568,7 @@ Here are practical examples of how to interact with the server:
 - Security compliance reminders
 
 #### 📋 **All Reports Tool**
+
 ```
 "Give me a complete overview of all reports"
 "Show me the current state of all vulnerabilities"
@@ -545,12 +576,14 @@ Here are practical examples of how to interact with the server:
 ```
 
 **What you get:**
+
 - Comprehensive report listing across all states
 - Program performance metrics
 - State distribution analysis
 - Complete vulnerability timeline data
 
 #### 🔍 **Report Details Tool**
+
 ```
 "Tell me everything about report #1234567"
 "I need full analysis of report 1234567"
@@ -558,6 +591,7 @@ Here are practical examples of how to interact with the server:
 ```
 
 **What you get:**
+
 - Complete vulnerability information and timeline
 - Reporter statistics and history
 - Severity assessment and methodology
@@ -565,6 +599,7 @@ Here are practical examples of how to interact with the server:
 - MDC security guidance and next steps
 
 #### 🎯 **Scope Validation Tool**
+
 ```
 "Is report #1234567 in scope?"
 "Check if this vulnerability affects our covered assets"
@@ -572,6 +607,7 @@ Here are practical examples of how to interact with the server:
 ```
 
 **What you get:**
+
 - Detailed scope analysis against program policy
 - Asset matching and bounty eligibility
 - Maximum severity limits for the asset
@@ -579,6 +615,7 @@ Here are practical examples of how to interact with the server:
 - MDC scope validation checklist
 
 #### 🔄 **Duplicate Detection Tool**
+
 ```
 "Is report #1234567 a duplicate?"
 "Check for similar reports to #1234567"
@@ -586,6 +623,7 @@ Here are practical examples of how to interact with the server:
 ```
 
 **What you get:**
+
 - Similarity scoring across multiple criteria
 - Categorized potential duplicates (likely/possible)
 - Detailed comparison reasoning
@@ -593,6 +631,7 @@ Here are practical examples of how to interact with the server:
 - MDC duplicate determination guidelines
 
 #### 📊 **Weekly Reporting Tool**
+
 ```
 "Create this week's status report"
 "What's our weekly security summary?"
@@ -600,6 +639,7 @@ Here are practical examples of how to interact with the server:
 ```
 
 **What you get:**
+
 - Comprehensive weekly activity analysis
 - Compliance framework status updates
 - Detailed closed reports outcomes
@@ -610,20 +650,25 @@ Here are practical examples of how to interact with the server:
 ### Advanced Usage Tips
 
 #### **Combining Tools for Workflow**
+
 ```
 "Check report #1234567 for duplicates, scope, and give me full analysis"
 ```
+
 Claude will automatically use multiple tools (`check_duplicate`, `check_scope`, `check_report`) to provide comprehensive analysis.
 
 #### **Contextual Follow-ups**
+
 ```
 You: "Show me new reports"
 Claude: [Shows 5 new reports]
 You: "Check if the first one is a duplicate"
 ```
+
 Claude remembers context and will check the first report from the previous response.
 
 #### **Security-Focused Queries**
+
 ```
 "What reports this week need immediate security attention?"
 "Are there any compliance-critical vulnerabilities I should know about?"
@@ -637,7 +682,7 @@ The MDC framework automatically provides security-focused analysis and recommend
 Every tool response includes:
 
 - **🔒 Security Guidance** - Automatic policy compliance checks
-- **⚠️ Escalation Alerts** - Immediate attention triggers  
+- **⚠️ Escalation Alerts** - Immediate attention triggers
 - **📋 Triage Questions** - Initial assessment prompts
 - **✅ Validation Checklists** - Required verification steps
 - **💡 Best Practices** - Researcher interaction guidelines
@@ -647,7 +692,7 @@ Every tool response includes:
 The server provides multiple data formats:
 
 - **📝 Formatted Summaries** - Human-readable analysis
-- **📊 Structured Data** - Organized metrics and timelines  
+- **📊 Structured Data** - Organized metrics and timelines
 - **🔍 Raw JSON** - Complete API responses for advanced use
 - **📈 Visual Analytics** - Trend analysis and comparisons
 - **🎯 Action Items** - Specific next steps and recommendations
@@ -655,27 +700,33 @@ The server provides multiple data formats:
 ## Available Tools
 
 ### `get_new_reports`
+
 Fetches all new reports (state=new) for your program with comprehensive details including reporter info, severity, and vulnerability details.
 
 ### `get_all_reports`
+
 Fetches all reports regardless of state for comprehensive program analysis.
 
 ### `check_report`
+
 Retrieves detailed information for a specific report by ID, including complete vulnerability information and timeline.
 
 **Usage:** `check_report(report_id="123456")`
 
 ### `check_scope`
+
 Analyzes whether a specific report falls within your program's scope by comparing against structured scope rules and policy.
 
 **Usage:** `check_scope(report_id="123456")`
 
 ### `check_duplicate`
+
 Performs intelligent duplicate analysis using similarity scoring across titles, weaknesses, assets, and vulnerability descriptions.
 
 **Usage:** `check_duplicate(report_id="123456")`
 
 ### `make_weekly_report`
+
 Generates comprehensive weekly status reports with metrics, trends, compliance analysis, and actionable insights.
 
 ## MDC Customization Guide
@@ -690,48 +741,48 @@ The MDC file is organized into several key sections:
 # Core organizational mission and principles
 core_directives:
   primary_mission: "Your organization's security mission statement"
-  
-# Operational decision-making framework  
+
+# Operational decision-making framework
 operational_principles:
   decision_framework:
-    - "Evidence-based security decisions"
-    - "Risk-proportionate responses"
-    
+    - 'Evidence-based security decisions'
+    - 'Risk-proportionate responses'
+
 # HackerOne-specific security policies
 hackerone_specific_rules:
   report_triage:
     classification_questions:
-      - "What is the actual security impact?"
-      - "Is this reproducible in production?"
-      
+      - 'What is the actual security impact?'
+      - 'Is this reproducible in production?'
+
   researcher_interaction:
     always:
-      - "Acknowledge receipt within 24 hours"
-      - "Provide clear next steps"
+      - 'Acknowledge receipt within 24 hours'
+      - 'Provide clear next steps'
     never:
-      - "Dismiss reports without investigation"
-      - "Use dismissive language"
+      - 'Dismiss reports without investigation'
+      - 'Use dismissive language'
 
-# Compliance and validation workflows      
+# Compliance and validation workflows
 validation_workflows:
   before_report_closure:
     ask:
-      - "Has impact been fully assessed?"
-      - "Are compliance requirements met?"
+      - 'Has impact been fully assessed?'
+      - 'Are compliance requirements met?'
 
 # Escalation triggers and procedures
 escalation_triggers:
   immediate_escalation:
-    - "zero-day"
-    - "data breach"
-    - "authentication bypass"
+    - 'zero-day'
+    - 'data breach'
+    - 'authentication bypass'
   questions_during_escalation:
-    - "Who needs immediate notification?"
-    - "What compliance reporting is required?"
+    - 'Who needs immediate notification?'
+    - 'What compliance reporting is required?'
 
 # Daily operational reminders
 reminder:
-  core_philosophy: "Your key security principle or reminder"
+  core_philosophy: 'Your key security principle or reminder'
 ```
 
 ### Customizing Your MDC File
@@ -742,7 +793,7 @@ Replace the placeholder mission with your organization's actual security objecti
 
 ```yaml
 core_directives:
-  primary_mission: "Protect customer data through proactive vulnerability management and rapid incident response"
+  primary_mission: 'Protect customer data through proactive vulnerability management and rapid incident response'
 ```
 
 #### 2. **Set Triage Questions**
@@ -753,10 +804,10 @@ Customize questions based on your specific threat model and business context:
 hackerone_specific_rules:
   report_triage:
     classification_questions:
-      - "Does this affect customer data?"
-      - "Is this exploitable in our production environment?"
-      - "What is the CVSS score based on our infrastructure?"
-      - "Are there compensating controls in place?"
+      - 'Does this affect customer data?'
+      - 'Is this exploitable in our production environment?'
+      - 'What is the CVSS score based on our infrastructure?'
+      - 'Are there compensating controls in place?'
 ```
 
 #### 3. **Configure Severity Rules**
@@ -768,12 +819,12 @@ hackerone_specific_rules:
   report_triage:
     severity_assessment:
       critical:
-        ask_before_marking: "Has executive team been notified?"
-        verification: "Confirmed exploitable in production"
+        ask_before_marking: 'Has executive team been notified?'
+        verification: 'Confirmed exploitable in production'
       high:
-        clarify: "Business impact assessment completed"
+        clarify: 'Business impact assessment completed'
       medium:
-        verification: "Reproducibility confirmed"
+        verification: 'Reproducibility confirmed'
 ```
 
 #### 4. **Set Researcher Interaction Policies**
@@ -784,12 +835,12 @@ Define your organization's communication standards:
 hackerone_specific_rules:
   researcher_interaction:
     always:
-      - "Respond within your published SLA timeframe"
-      - "Provide technical rationale for decisions"
-      - "Thank researchers for their contributions"
+      - 'Respond within your published SLA timeframe'
+      - 'Provide technical rationale for decisions'
+      - 'Thank researchers for their contributions'
     never:
-      - "Share internal vulnerability assessment details"
-      - "Make promises about fix timelines without approval"
+      - 'Share internal vulnerability assessment details'
+      - 'Make promises about fix timelines without approval'
 ```
 
 #### 5. **Configure Escalation Triggers**
@@ -799,15 +850,15 @@ Set keywords and conditions that require immediate escalation:
 ```yaml
 escalation_triggers:
   immediate_escalation:
-    - "remote code execution"
-    - "sql injection"
-    - "authentication bypass"
-    - "privilege escalation"
-    - "your-critical-system-name"
+    - 'remote code execution'
+    - 'sql injection'
+    - 'authentication bypass'
+    - 'privilege escalation'
+    - 'your-critical-system-name'
   questions_during_escalation:
-    - "Has the security team lead been notified?"
-    - "Is this affecting production systems?"
-    - "Do we need to invoke incident response procedures?"
+    - 'Has the security team lead been notified?'
+    - 'Is this affecting production systems?'
+    - 'Do we need to invoke incident response procedures?'
 ```
 
 #### 6. **Define Validation Workflows**
@@ -818,61 +869,64 @@ Create checklists for different operational stages:
 validation_workflows:
   before_report_closure:
     ask:
-      - "Has the fix been deployed and verified?"
-      - "Has the researcher been properly thanked?"
-      - "Are compliance documentation requirements met?"
-  
+      - 'Has the fix been deployed and verified?'
+      - 'Has the researcher been properly thanked?'
+      - 'Are compliance documentation requirements met?'
+
   before_bounty_award:
     ask:
-      - "Is the bounty amount consistent with our policy?"
-      - "Has the impact been properly validated?"
+      - 'Is the bounty amount consistent with our policy?'
+      - 'Has the impact been properly validated?'
 ```
 
 ### Industry-Specific Customizations
 
 #### **Financial Services**
+
 ```yaml
 escalation_triggers:
   immediate_escalation:
-    - "payment processing"
-    - "customer financial data"
-    - "regulatory compliance"
-    
+    - 'payment processing'
+    - 'customer financial data'
+    - 'regulatory compliance'
+
 validation_workflows:
   before_report_closure:
     ask:
-      - "Does this require regulatory notification?"
-      - "Has PCI DSS impact been assessed?"
+      - 'Does this require regulatory notification?'
+      - 'Has PCI DSS impact been assessed?'
 ```
 
 #### **Healthcare**
+
 ```yaml
 escalation_triggers:
   immediate_escalation:
-    - "patient data"
-    - "hipaa"
-    - "phi exposure"
-    
+    - 'patient data'
+    - 'hipaa'
+    - 'phi exposure'
+
 validation_workflows:
   before_report_closure:
     ask:
-      - "Has HIPAA compliance officer been notified?"
-      - "Is patient data exposure documented?"
+      - 'Has HIPAA compliance officer been notified?'
+      - 'Is patient data exposure documented?'
 ```
 
 #### **SaaS/Technology**
+
 ```yaml
 escalation_triggers:
   immediate_escalation:
-    - "customer data access"
-    - "multi-tenant isolation"
-    - "api authentication"
-    
+    - 'customer data access'
+    - 'multi-tenant isolation'
+    - 'api authentication'
+
 hackerone_specific_rules:
   report_triage:
     classification_questions:
-      - "Does this affect multiple customers?"
-      - "Can this be exploited at scale?"
+      - 'Does this affect multiple customers?'
+      - 'Can this be exploited at scale?'
 ```
 
 ### Testing Your MDC Configuration
@@ -880,7 +934,7 @@ hackerone_specific_rules:
 After customizing your MDC file:
 
 1. **Validate YAML Syntax**: Use a YAML validator to ensure proper formatting
-2. **Test with Sample Reports**: Run the server against test data to verify your rules work as expected  
+2. **Test with Sample Reports**: Run the server against test data to verify your rules work as expected
 3. **Review with Security Team**: Have your security team review the policies and escalation triggers
 4. **Iterate Based on Usage**: Adjust rules based on real-world usage and feedback
 
@@ -906,19 +960,23 @@ The server includes built-in security compliance features:
 ### Common Issues
 
 **1. "Credentials not configured" error**
+
 - Verify your `.env` file contains correct HackerOne credentials
 - Ensure environment variables are properly set in Claude Desktop configuration
 
 **2. "Program not found" error**
+
 - Check that your `H1_PROGRAM` value matches your actual program handle
 - Verify you have access to the specified program in HackerOne
 
 **3. "Connection timeout" errors**
+
 - Check your internet connection
 - Verify HackerOne API is accessible from your network
 - Consider increasing timeout values if on a slow connection
 
 **4. Claude Desktop doesn't show the server**
+
 - Verify the absolute path in your configuration is correct
 - Check that Python/Poetry is available in your system PATH
 - Review Claude Desktop logs for error messages
@@ -929,10 +987,10 @@ To enable debug logging, run the server directly:
 
 ```bash
 # Using Poetry
-poetry run python src/hackerone_mcp/main.py
+poetry run hackerone-mcp
 
-# Using Python directly
-python src/hackerone_mcp/main.py
+# Using Python directly (after installing with pip install -e .)
+hackerone-mcp
 ```
 
 This will show detailed logging information to help diagnose issues.
@@ -940,6 +998,7 @@ This will show detailed logging information to help diagnose issues.
 ### Logs Location
 
 Claude Desktop logs can be found at:
+
 - **macOS:** `~/Library/Logs/Claude/`
 - **Windows:** `%APPDATA%\Claude\logs\`
 - **Linux:** `~/.config/Claude/logs/`
@@ -967,6 +1026,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Support
 
 For issues related to:
+
 - **HackerOne API**: Check HackerOne's API documentation and support
 - **Claude Desktop**: Refer to Anthropic's Claude Desktop documentation
 - **This MCP Server**: Open an issue in this repository
@@ -974,6 +1034,7 @@ For issues related to:
 ## Changelog
 
 ### v1.0.0
+
 - Initial release with core HackerOne integration
 - MDC compliance framework integration
 - Full report management capabilities
