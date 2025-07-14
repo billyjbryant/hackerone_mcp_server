@@ -40,9 +40,6 @@ htmlcov/
 .env.*
 *.envrc
 
-# Poetry
-poetry.lock
-
 # Jupyter
 .ipynb_checkpoints/
 
