@@ -273,9 +273,9 @@ class HackerOneMCPServer(Server):
             mdc_guidance["initial_questions"] = self.mdc_checker.get_initial_questions()
 
             # Add researcher interaction guidelines
-            mdc_guidance["researcher_guidelines"] = (
-                self.mdc_checker.get_researcher_interaction_guidelines()
-            )
+            mdc_guidance[
+                "researcher_guidelines"
+            ] = self.mdc_checker.get_researcher_interaction_guidelines()
 
             # Check each report for escalation needs
             if isinstance(response_data, list):
@@ -1008,9 +1008,7 @@ def generate_weekly_report(all_reports):
             ):
                 result += "High relevance to zero-knowledge architecture 🔴\n"
             else:
-                result += (
-                    "Standard security assessment with privacy considerations 🟡\n"
-                )
+                result += "Standard security assessment with privacy considerations 🟡\n"
 
             result += (
                 f"- **Timeline**: Privacy-first resolution approach maintained\n\n"
@@ -1095,9 +1093,7 @@ def generate_weekly_report(all_reports):
 
     # New Reports Requiring Attention
     if new_reports_this_week:
-        result += (
-            f"## 📋 New Reports Awaiting Triage ({len(new_reports_this_week)})\n\n"
-        )
+        result += f"## 📋 New Reports Awaiting Triage ({len(new_reports_this_week)})\n\n"
         for report in new_reports_this_week[:3]:  # Show top 3
             attrs = report["attributes"]
             result += f"- **Report #{report['id']}**: {attrs.get('title', 'N/A')}\n"
