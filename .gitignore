@@ -1,5 +1,56 @@
-# Ignore the .env file
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+*.env/
+pip-wheel-metadata/
+*.egg-info/
+dist/
+build/
+
+# IDEs/editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test, coverage, and logs
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.cache/
+*.log
+
+# Environment/config
 .env
+.env.*
+*.envrc
+
+# Poetry
+poetry.lock
+
+# Jupyter
+.ipynb_checkpoints/
 
 # Ignore a specific file inside the rules directory
 rules/hackerone_mcp_directives.mdc
+
+# Misc
+*.bak
+*.swp
+*~
+# End of Selection

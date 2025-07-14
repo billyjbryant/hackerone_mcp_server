@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "hackerone-mcp"
-version = "0.1.0"
+version = "1.0.0"
 description = "HackerOne MCP Server - Model Context Protocol server for HackerOne integration"
 authors = [
     {name = "Daniel Olson", email = "devbox4714@gmail.com"}
@@ -20,7 +20,7 @@ dependencies = [
 
 [tool.poetry]
 name = "hackerone-mcp"
-version = "0.1.0"
+version = "1.0.0"
 description = "HackerOne MCP Server - Model Context Protocol server for HackerOne integration"
 authors = ["Daniel Olson <devbox4714@gmail.com>"]
 readme = "README.md"

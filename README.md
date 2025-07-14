@@ -2,6 +2,23 @@
 
 A Model Context Protocol (MCP) server that provides seamless integration with HackerOne's bug bounty platform through Claude Desktop. This server enables security professionals to efficiently manage vulnerability reports, perform triage operations, and maintain compliance with security directives directly from Claude.
 
+## 🏢 For HackerOne Customers Only
+
+> [!IMPORTANT]
+> This MCP server is designed for **HackerOne customers** (companies and organizations that run bug bounty programs) to manage their vulnerability reports and triage operations.
+>
+> **This tool is NOT intended for:**
+>
+> - Security researchers/hackers who submit vulnerability reports
+> - Individual researchers looking to find or submit bugs
+> - Anyone without administrative access to a HackerOne program
+>
+> **You need:**
+>
+> - Administrative access to a HackerOne bug bounty program
+> - HackerOne API credentials with appropriate permissions
+> - Authorization to manage vulnerability reports for your organization
+
 ## Features
 
 - **Comprehensive Report Management**: Fetch and analyze new reports, all reports, or specific reports by ID
@@ -54,11 +71,11 @@ poetry install
 poetry run python --version
 ```
 
-**Poetry Troubleshooting:**
-
-- **Mac/Linux**: If `poetry` command not found, add `~/.local/bin` to your PATH
-- **Windows**: Poetry might install to `%APPDATA%\Python\Scripts` - add to PATH
-- **Permission Issues**: Use `python3 -m pip install --user poetry` as alternative
+> [!TIP] Poetry Troubleshooting:
+>
+> - **Mac/Linux**: If `poetry` command not found, add `~/.local/bin` to your PATH
+> - **Windows**: Poetry might install to `%APPDATA%\Python\Scripts` - add to PATH
+> - **Permission Issues**: Use `python3 -m pip install --user poetry` as alternative
 
 #### Option B: Using pip + venv
 
@@ -94,18 +111,18 @@ The server requires these packages (automatically installed by Poetry/pip):
 
 #### Dependency Installation Troubleshooting
 
-**1. Python Version Issues:**
-
-```bash
-# Check Python version
-python --version
-python3 --version
-
-# If Python < 3.8, install newer version:
-# macOS: brew install python@3.11
-# Ubuntu: sudo apt install python3.11
-# Windows: Download from python.org
-```
+> [!TIP] Python Version Issues:
+>
+> ```bash
+> # Check Python version
+> python --version
+> python3 --version
+>
+> # If Python < 3.8, install newer version:
+> # macOS: brew install python@3.11
+> # Ubuntu: sudo apt install python3.11
+> # Windows: Download from python.org
+> ```
 
 **2. SSL Certificate Errors:**
 
@@ -174,12 +191,12 @@ H1_PROGRAM=your_program_handle
    - API Token: The generated token (starts with `h1_`)
 6. **Find Program Handle**: Your program handle is in the URL: `https://hackerone.com/your_program_handle`
 
-**⚠️ Environment Variable Gotchas:**
-
-- **No Quotes**: Don't wrap values in quotes in .env file
-- **No Spaces**: `H1_USERNAME=value` not `H1_USERNAME = value`
-- **File Location**: `.env` must be in the project root directory
-- **Git Ignore**: Never commit `.env` to version control (already in .gitignore)
+> [!WARNING] Environment Variable Gotchas:
+>
+> - **No Quotes**: Don't wrap values in quotes in .env file
+> - **No Spaces**: `H1_USERNAME=value` not `H1_USERNAME = value`
+> - **File Location**: `.env` must be in the project root directory
+> - **Git Ignore**: Never commit `.env` to version control (already in .gitignore)
 
 #### Alternative: System Environment Variables
 
@@ -208,24 +225,20 @@ The server includes security compliance directives through a Management Directiv
 
 #### Setting Up Your MDC File
 
-1. **Locate MDC File**: The placeholder is at `rules/hackerone_mcp_directives.mdc`
-2. **⚠️ CRITICAL**: Update the hardcoded path in `src/hackerone_mcp/main.py`:
+The MDC file path is automatically configured to use dynamic paths relative to the project root. The system:
 
-The MDC file path is now automatically configured to use dynamic paths relative to the project root. The current implementation:
+- **Automatically locates** the MDC file at `rules/hackerone_mcp_directives.mdc`
+- **Dynamically resolves** the path based on the project structure
+- **Supports customization** via the `MDC_FILE_PATH` environment variable
 
-```python
-# Dynamic MDC file path - relative to project root
-def get_project_root() -> Path:
-    """Get the project root directory"""
-    return Path(__file__).parent.parent.parent
+You can override the default location by setting the `MDC_FILE_PATH` environment variable in your `.env` file:
 
-# MDC file path - can be overridden with environment variable
-MDC_FILE_PATH = os.getenv("MDC_FILE_PATH", str(get_project_root() / "rules" / "hackerone_mcp_directives.mdc"))
+```bash
+# Optional: Custom MDC file path
+MDC_FILE_PATH=/custom/path/to/your/mdc/file.mdc
 ```
 
-This automatically finds the project root and locates the MDC file, while still allowing customization via the `MDC_FILE_PATH` environment variable.
-
-4. **Verify MDC File Exists**:
+#### **Verify MDC File Exists**
 
 ```bash
 # Check if MDC file exists
@@ -250,53 +263,67 @@ hackerone-mcp
 
 #### Environment Test
 
-Create a test script `test_setup.py`:
-
-```python
-import os
-from dotenv import load_dotenv
-import httpx
-import yaml
-
-# Test environment loading
-load_dotenv()
-print("✓ Environment variables loaded")
-
-# Test credentials
-username = os.getenv("H1_USERNAME")
-token = os.getenv("H1_API_TOKEN")
-program = os.getenv("H1_PROGRAM")
-
-if not all([username, token, program]):
-    print("❌ Missing credentials")
-    exit(1)
-print("✓ Credentials configured")
-
-# Test network connectivity
-try:
-    response = httpx.get("https://api.hackerone.com/v1/me", timeout=10)
-    print("✓ HackerOne API accessible")
-except Exception as e:
-    print(f"❌ Network issue: {e}")
-
-print("✅ Setup verification complete!")
-```
-
-Run the test:
+The project includes a comprehensive test script that verifies your setup:
 
 ```bash
 # Using Poetry
-poetry run python test_setup.py
+poetry run python scripts/test_setup.py
 
 # Using pip/venv
-python test_setup.py
+python scripts/test_setup.py
+
+# Using 1Password CLI (recommended for secure credential management)
+op run --env-file=./.env -- python scripts/test_setup.py
 ```
+
+**What the test script verifies:**
+
+1. **Environment Loading** - Confirms `.env` file is loaded correctly
+2. **Credentials Configuration** - Validates all required environment variables are set
+3. **Network Connectivity** - Tests basic connection to HackerOne API
+4. **Authentication** - Verifies API credentials work and shows accessible programs
+5. **Program Access** - Finds your specific program by handle and confirms access
+6. **Reports Access** - Tests ability to read reports from your program
+
+**Expected output:**
+
+```console
+✓ Environment variables loaded
+✓ Credentials configured
+username: your_username
+token: xxxxx...
+program: your_program_handle
+✓ HackerOne API reachable
+
+--- Testing Authentication Access ---
+✓ Authentication successful
+  Active programs accessible: 2
+✓ Found target program: your_program_handle
+  ID: 12345
+
+--- Testing Program Access ---
+✓ Program access authorized
+  Handle: your_program_handle
+  ID: 12345
+
+--- Testing Reports Access ---
+✓ Reports access authorized
+  Can access reports for program: your_program_handle
+
+✅ All authentication and authorization tests passed!
+```
+
+> [!NOTE] If you encounter errors
+>
+> - **Authentication failed**: Check your HackerOne username and API token
+> - **Program not found**: Verify the program handle is correct and you have access
+> - **Network issues**: Check your internet connection and firewall settings
 
 ### Common Installation Issues & Solutions
 
 #### 1. **MDC File Path Error**
 
-```
+```python
 Error: MDC file not found at /path/to/rules/hackerone_mcp_directives.mdc
 ```
 
@@ -308,7 +335,7 @@ Error: MDC file not found at /path/to/rules/hackerone_mcp_directives.mdc
 
 #### 2. **Import Errors**
 
-```
+```python
 ModuleNotFoundError: No module named 'httpx'
 ```
 
@@ -319,7 +346,7 @@ ModuleNotFoundError: No module named 'httpx'
 
 #### 3. **Permission Denied**
 
-```
+```text
 PermissionError: [Errno 13] Permission denied
 ```
 
@@ -330,7 +357,7 @@ PermissionError: [Errno 13] Permission denied
 
 #### 4. **Python Path Issues**
 
-```
+```text
 python: command not found
 ```
 
@@ -342,7 +369,7 @@ python: command not found
 
 #### 5. **Poetry Not Found**
 
-```
+```text
 poetry: command not found
 ```
 
@@ -354,7 +381,7 @@ poetry: command not found
 
 #### 6. **SSL/TLS Errors**
 
-```
+```python
 SSL: CERTIFICATE_VERIFY_FAILED
 ```
 
@@ -365,7 +392,7 @@ SSL: CERTIFICATE_VERIFY_FAILED
 
 #### 7. **HackerOne API Authentication**
 
-```
+```python
 Error: HackerOne API returned status 401
 ```
 
@@ -381,7 +408,10 @@ Test that the dynamic path system is working correctly:
 
 ```bash
 # Run the path test script
-python test_paths.py
+python scripts/test_paths.py
+
+# Using Poetry
+poetry run python scripts/test_paths.py
 
 # Expected output:
 🔍 Path Resolution Test
@@ -395,9 +425,29 @@ MDC file path: /path/to/hackerone-mcp/rules/hackerone_mcp_directives.mdc
 🔧 Environment Variable Test
 ==================================================
 Custom MDC path: /tmp/test_mdc.mdc
+✅ Environment variable override works
+   Custom MDC file created at: /tmp/test_mdc.mdc
 
-✅ Path resolution test completed successfully!
+📁 Relative Path Resolution Test
+==================================================
+✅ Main module: /path/to/hackerone-mcp/src/hackerone_mcp/main.py
+✅ Test setup script: /path/to/hackerone-mcp/scripts/test_setup.py
+⚠️  MDC file: /path/to/hackerone-mcp/rules/hackerone_mcp_directives.mdc (not found)
+✅ Project config: /path/to/hackerone-mcp/pyproject.toml
+✅ README file: /path/to/hackerone-mcp/README.md
+
+============================================================
+✅ All path resolution tests passed!
+   3/3 tests successful
 ```
+
+**What this test verifies:**
+
+- **Dynamic path detection** - Confirms the project root is found correctly
+- **MDC file path resolution** - Tests absolute path generation
+- **Environment variable override** - Verifies custom MDC path works
+- **Relative path resolution** - Tests that all expected files are found
+- **Project structure validation** - Ensures required directories exist
 
 ### 7. Verify Installation Success
 
@@ -424,23 +474,9 @@ Press `Ctrl+C` to stop the test.
 
 Find your Claude Desktop configuration file:
 
-**macOS:**
-
-```
-~/Library/Application Support/Claude/claude_desktop_config.json
-```
-
-**Windows:**
-
-```
-%APPDATA%\Claude\claude_desktop_config.json
-```
-
-**Linux:**
-
-```
-~/.config/Claude/claude_desktop_config.json
-```
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
 
 ### 2. Update Configuration
 
@@ -451,20 +487,23 @@ Add the HackerOne MCP server to your Claude Desktop configuration:
   "mcpServers": {
     "hackerone-mcp": {
       "command": "python",
-      "args": ["/absolute/path/to/hackerone-mcp/src/hackerone_mcp/main.py"],
+      "args": ["./src/hackerone_mcp/main.py"],
+      "cwd": "/absolute/path/to/hackerone-mcp",
+      "working_directory": "/absolute/path/to/hackerone-mcp", // For compatibility with other MCP clients
       "env": {
         "H1_USERNAME": "your_hackerone_username",
         "H1_API_TOKEN": "your_hackerone_api_token",
         "H1_PROGRAM": "your_program_handle"
-      }
+      },
     }
   }
 }
 ```
 
-**Important:** Replace `/absolute/path/to/hackerone-mcp` with the full path to your project directory.
+> [!IMPORTANT]
+> Replace `/absolute/path/to/hackerone-mcp` with the full path to your project directory.
 
-If using Poetry, use this configuration instead:
+#### If using Poetry, use this configuration instead
 
 ```json
 {
@@ -473,11 +512,12 @@ If using Poetry, use this configuration instead:
       "command": "poetry",
       "args": ["run", "hackerone-mcp"],
       "cwd": "/absolute/path/to/hackerone-mcp",
+      "working_directory": "/absolute/path/to/hackerone-mcp", // For compatibility with other MCP clients
       "env": {
         "H1_USERNAME": "your_hackerone_username",
         "H1_API_TOKEN": "your_hackerone_api_token",
         "H1_PROGRAM": "your_program_handle"
-      }
+      },
     }
   }
 }
@@ -553,7 +593,7 @@ Here are practical examples of how to interact with the server:
 
 #### 🆕 **New Reports Tool**
 
-```
+```text
 "Show me new reports that need triage"
 "What new vulnerabilities came in today?"
 "Are there any new reports requiring immediate escalation?"
@@ -569,7 +609,7 @@ Here are practical examples of how to interact with the server:
 
 #### 📋 **All Reports Tool**
 
-```
+```text
 "Give me a complete overview of all reports"
 "Show me the current state of all vulnerabilities"
 "What's the full picture of our bug bounty program?"
@@ -584,7 +624,7 @@ Here are practical examples of how to interact with the server:
 
 #### 🔍 **Report Details Tool**
 
-```
+```text
 "Tell me everything about report #1234567"
 "I need full analysis of report 1234567"
 "Show me the technical details for this specific report"
@@ -600,7 +640,7 @@ Here are practical examples of how to interact with the server:
 
 #### 🎯 **Scope Validation Tool**
 
-```
+```text
 "Is report #1234567 in scope?"
 "Check if this vulnerability affects our covered assets"
 "Validate the scope for report 1234567"
@@ -616,7 +656,7 @@ Here are practical examples of how to interact with the server:
 
 #### 🔄 **Duplicate Detection Tool**
 
-```
+```text
 "Is report #1234567 a duplicate?"
 "Check for similar reports to #1234567"
 "Analyze potential duplicates for this report"
@@ -632,7 +672,7 @@ Here are practical examples of how to interact with the server:
 
 #### 📊 **Weekly Reporting Tool**
 
-```
+```text
 "Create this week's status report"
 "What's our weekly security summary?"
 "Generate management report for this week"
@@ -651,7 +691,7 @@ Here are practical examples of how to interact with the server:
 
 #### **Combining Tools for Workflow**
 
-```
+```text
 "Check report #1234567 for duplicates, scope, and give me full analysis"
 ```
 
@@ -659,7 +699,7 @@ Claude will automatically use multiple tools (`check_duplicate`, `check_scope`, 
 
 #### **Contextual Follow-ups**
 
-```
+```text
 You: "Show me new reports"
 Claude: [Shows 5 new reports]
 You: "Check if the first one is a duplicate"
@@ -669,7 +709,7 @@ Claude remembers context and will check the first report from the previous respo
 
 #### **Security-Focused Queries**
 
-```
+```text
 "What reports this week need immediate security attention?"
 "Are there any compliance-critical vulnerabilities I should know about?"
 "Show me zero-knowledge architecture related reports"
@@ -959,27 +999,23 @@ The server includes built-in security compliance features:
 
 ### Common Issues
 
-**1. "Credentials not configured" error**
+1. **"Credentials not configured" error**
+   - Verify your `.env` file contains correct HackerOne credentials
+   - Ensure environment variables are properly set in Claude Desktop configuration
 
-- Verify your `.env` file contains correct HackerOne credentials
-- Ensure environment variables are properly set in Claude Desktop configuration
+2. **"Program not found" error**
+   - Check that your `H1_PROGRAM` value matches your actual program handle
+   - Verify you have access to the specified program in HackerOne
 
-**2. "Program not found" error**
+3. **"Connection timeout" errors**
+   - Check your internet connection
+   - Verify HackerOne API is accessible from your network
+   - Consider increasing timeout values if on a slow connection
 
-- Check that your `H1_PROGRAM` value matches your actual program handle
-- Verify you have access to the specified program in HackerOne
-
-**3. "Connection timeout" errors**
-
-- Check your internet connection
-- Verify HackerOne API is accessible from your network
-- Consider increasing timeout values if on a slow connection
-
-**4. Claude Desktop doesn't show the server**
-
-- Verify the absolute path in your configuration is correct
-- Check that Python/Poetry is available in your system PATH
-- Review Claude Desktop logs for error messages
+4. **Claude Desktop doesn't show the server**
+   - Verify the absolute path in your configuration is correct
+   - Check that Python/Poetry is available in your system PATH
+   - Review Claude Desktop logs for error messages
 
 ### Debug Mode
 
